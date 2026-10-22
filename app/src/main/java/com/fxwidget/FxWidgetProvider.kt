@@ -25,9 +25,9 @@ class FxWidgetProvider : AppWidgetProvider() {
             R.id.k5 to "5", R.id.k6 to "6", R.id.k7 to "7", R.id.k8 to "8", R.id.k9 to "9",
             R.id.kdot to ".", R.id.kclr to "C", R.id.kback to "B",
         )
-        private val QUICK = listOf(R.id.q0, R.id.q1, R.id.q2, R.id.q3)
+        private val QUICK = listOf(R.id.q0, R.id.q1, R.id.q2, R.id.q3, R.id.q4, R.id.q5)
 
-        fun render(context: Context, manager: AppWidgetManager, ids: IntArray) {
+        fun render(context: Context, manager: AppWidgetManager, ids: IntArray, swapped: Boolean = false) {
             val repo = RateRepository(context)
             val rates = repo.cachedRates()
             val amount = repo.amount
@@ -47,15 +47,13 @@ class FxWidgetProvider : AppWidgetProvider() {
             )
             v.setTextViewText(R.id.status, Widgets.rateLine(repo, rates))
 
-            Converter.quickAmounts(repo.from).zip(QUICK).forEach { (value, id) ->
-                // "+" says it adds; drop the symbol on 4+ digits so the chip stays readable
-                val label = "+" + Converter.displayInput(value.toString()) + if (value < 1000) " $fromSym" else ""
-                v.setTextViewText(id, label)
+            Converter.QUICK_AMOUNTS.zip(QUICK).forEach { (value, id) ->
+                v.setTextViewText(id, "+$value")
                 v.setOnClickPendingIntent(id, Widgets.broadcast(context, cls, Widgets.ACTION_SET + value))
             }
             KEYS.forEach { (id, key) -> v.setOnClickPendingIntent(id, Widgets.broadcast(context, cls, Widgets.ACTION_KEY + key)) }
             val swap = Widgets.broadcast(context, cls, Widgets.ACTION_SWAP)
-            v.setDisplayedChild(R.id.swap_btn, repo.swapCount % 2)
+            if (swapped) v.showNext(R.id.swap_btn)
             v.setOnClickPendingIntent(R.id.swap_btn, swap)
             v.setOnClickPendingIntent(R.id.swap_a, swap)
             v.setOnClickPendingIntent(R.id.swap_b, swap)

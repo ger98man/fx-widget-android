@@ -64,11 +64,6 @@ class RateRepository(context: Context) {
         get() = prefs.getString("amount", "100") ?: "100"
         set(v) = prefs.edit().putString("amount", v).apply()
 
-    /** Bumped on every swap; its parity picks the flipper child so the button animates. */
-    var swapCount: Int
-        get() = prefs.getInt("swap_count", 0)
-        set(v) = prefs.edit().putInt("swap_count", v).apply()
-
     var from: String
         get() = prefs.getString("from", "THB") ?: "THB"
         set(v) = prefs.edit().putString("from", v).apply()

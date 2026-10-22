@@ -18,10 +18,10 @@ object Widgets {
     const val ACTION_TO = "com.fxwidget.TO"
     const val ACTION_REFRESH = "com.fxwidget.REFRESH"
 
-    fun updateAll(ctx: Context) {
+    fun updateAll(ctx: Context, swapped: Boolean = false) {
         val mgr = AppWidgetManager.getInstance(ctx)
         mgr.getAppWidgetIds(ComponentName(ctx, FxWidgetProvider::class.java))
-            .takeIf { it.isNotEmpty() }?.let { FxWidgetProvider.render(ctx, mgr, it) }
+            .takeIf { it.isNotEmpty() }?.let { FxWidgetProvider.render(ctx, mgr, it, swapped) }
         mgr.getAppWidgetIds(ComponentName(ctx, PresetWidgetProvider::class.java))
             .takeIf { it.isNotEmpty() }?.let { PresetWidgetProvider.render(ctx, mgr, it) }
     }
@@ -80,7 +80,8 @@ object Widgets {
                 val out = rates?.let { Converter.convert(repo.amount.toDoubleOrNull() ?: 0.0, repo.from, repo.to, it) }
                 if (out != null && out > 0) repo.amount = Converter.plain(out)
                 val f = repo.from; repo.from = repo.to; repo.to = f
-                repo.swapCount = repo.swapCount + 1
+                updateAll(ctx, swapped = true)
+                return true
             }
             action == ACTION_FROM -> repo.from = next(repo.from, skip = repo.to)
             action == ACTION_TO -> repo.to = next(repo.to, skip = repo.from)

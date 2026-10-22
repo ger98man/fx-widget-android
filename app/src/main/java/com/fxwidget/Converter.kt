@@ -76,15 +76,8 @@ object Converter {
 
     fun flag(currency: String): String = BY_CODE[currency]?.flag ?: "🏳️"
 
-    /** Four quick amounts under the keypad. */
-    fun quickAmounts(currency: String): List<Int> = when (currency) {
-        "THB" -> listOf(100, 500, 1000, 5000)
-        "JPY", "RUB", "INR" -> listOf(1000, 5000, 10000, 50000)
-        "KRW", "HUF" -> listOf(5000, 10000, 50000, 100000)
-        "VND", "IDR" -> listOf(50000, 100000, 500000, 1000000)
-        "CNY", "PLN", "CZK", "SEK", "NOK", "DKK", "TRY", "AED", "MYR" -> listOf(50, 100, 500, 1000)
-        else -> listOf(10, 20, 50, 100)
-    }
+    /** Quick add-amounts under the keypad (same for every currency). */
+    val QUICK_AMOUNTS = listOf(1, 10, 50, 100, 500, 1000)
 
     /** Typed amount with thousands grouping, keeping a trailing "." or decimals as typed. */
     fun displayInput(raw: String): String {

@@ -40,7 +40,7 @@ class MainActivity : Activity() {
         status = findViewById(R.id.status)
         fromBtn = findViewById(R.id.from_btn)
         toBtn = findViewById(R.id.to_btn)
-        presetViews = listOf(R.id.a0, R.id.a1, R.id.a2, R.id.a3, R.id.a4).map { findViewById<TextView>(it) }
+        presetViews = listOf(R.id.a0, R.id.a1, R.id.a2, R.id.a3, R.id.a4, R.id.a5).map { findViewById<TextView>(it) }
 
         input.setText(repo.amount.takeIf { it != "0" } ?: "")
         input.setSelection(input.text.length)
@@ -148,8 +148,8 @@ class MainActivity : Activity() {
         val out = rates?.let { Converter.convert(amount, repo.from, repo.to, it) }
         result.text = out?.let { "${Converter.formatResult(it)} ${Converter.symbol(repo.to)}" } ?: "—"
 
-        Converter.presets(repo.from).zip(presetViews).forEach { (value, view) ->
-            view.text = "+" + Converter.displayInput(value.toString())
+        Converter.QUICK_AMOUNTS.zip(presetViews).forEach { (value, view) ->
+            view.text = "+$value"
             view.setOnClickListener {
                 input.setText(Converter.addAmount(repo.amount, value))
                 input.setSelection(input.text.length)

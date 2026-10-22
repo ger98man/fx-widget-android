@@ -49,7 +49,8 @@
             android:id="@+id/swap_btn"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:layout_gravity="center"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="14dp"
             android:background="@drawable/swap_circle"
             android:inAnimation="@anim/swap_in"
             android:outAnimation="@anim/swap_out">
@@ -106,6 +107,8 @@
         <TextView android:id="@+id/q1" style="@style/FxQuick" />
         <TextView android:id="@+id/q2" style="@style/FxQuick" />
         <TextView android:id="@+id/q3" style="@style/FxQuick" />
+        <TextView android:id="@+id/q4" style="@style/FxQuick" />
+        <TextView android:id="@+id/q5" style="@style/FxQuick" />
         <TextView android:id="@+id/kclr" style="@style/FxQuick" android:text="C" android:textColor="#FF4FC3" />
     </LinearLayout>
 </LinearLayout>
