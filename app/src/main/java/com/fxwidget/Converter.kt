@@ -65,6 +65,10 @@ object Converter {
         return if (raw.contains('.')) grouped + "." + raw.substringAfter('.') else grouped
     }
 
+    /** Quick-amount tap: adds to what's there (100 + 100 + 100 = 300). */
+    fun addAmount(current: String, add: Int): String =
+        plain((current.toDoubleOrNull() ?: 0.0) + add)
+
     /** Machine amount for re-entry: up to 2 decimals, no trailing zeros, no grouping. */
     fun plain(value: Double): String =
         String.format(Locale.US, "%.2f", value).trimEnd('0').trimEnd('.')

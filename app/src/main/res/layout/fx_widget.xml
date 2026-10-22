@@ -9,11 +9,12 @@
     <!-- Two currency rows with the swap button sitting on the seam between them -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <LinearLayout android:id="@+id/from_row" style="@style/FxRow"
@@ -47,14 +48,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="22dp"
+        android:layout_height="28dp"
         android:layout_marginTop="2dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="4dp">
         <TextView android:id="@+id/status" android:layout_width="0dp" android:layout_height="wrap_content"
             android:layout_weight="1" android:singleLine="true" android:ellipsize="end"
-            android:textColor="#8B93A7" android:textSize="11sp" />
+            android:textColor="#AEB5C6" android:textSize="13sp" />
         <ImageView android:id="@+id/refresh_btn" android:layout_width="28dp" android:layout_height="match_parent"
             android:contentDescription="refresh" android:scaleType="center" android:src="@drawable/ic_refresh" />
     </LinearLayout>
@@ -82,8 +83,8 @@
     <!-- Quick amounts -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:layout_marginTop="4dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="6dp"
         android:orientation="horizontal">
         <TextView android:id="@+id/q0" style="@style/FxQuick" />
         <TextView android:id="@+id/q1" style="@style/FxQuick" />

@@ -151,7 +151,7 @@ class MainActivity : Activity() {
         Converter.presets(repo.from).zip(presetViews).forEach { (value, view) ->
             view.text = "%,d".format(value)
             view.setOnClickListener {
-                input.setText(value.toString())
+                input.setText(Converter.addAmount(repo.amount, value))
                 input.setSelection(input.text.length)
             }
         }

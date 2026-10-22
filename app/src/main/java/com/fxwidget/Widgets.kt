@@ -64,7 +64,8 @@ object Widgets {
     fun handle(ctx: Context, action: String, pending: AppWidgetProvider): Boolean {
         val repo = RateRepository(ctx)
         when {
-            action.startsWith(ACTION_SET) -> repo.amount = action.removePrefix(ACTION_SET)
+            action.startsWith(ACTION_SET) ->
+                repo.amount = Converter.addAmount(repo.amount, action.removePrefix(ACTION_SET).toInt())
             action.startsWith(ACTION_KEY) ->
                 repo.amount = Converter.applyKey(repo.amount, action.removePrefix(ACTION_KEY))
             action == ACTION_SWAP -> {

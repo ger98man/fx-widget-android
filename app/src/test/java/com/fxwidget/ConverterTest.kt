@@ -37,6 +37,8 @@ class ConverterTest {
         assertEquals("33.13", Converter.plain(33.1312))
         assertEquals("1250", Converter.plain(1250.0))
         assertEquals("33.1", Converter.plain(33.1))
+        assertEquals("300", Converter.addAmount(Converter.addAmount(Converter.addAmount("0", 100), 100), 100))
+        assertEquals("112.5", Converter.addAmount("12.5", 100))
     }
 
     @Test fun keypad() {
