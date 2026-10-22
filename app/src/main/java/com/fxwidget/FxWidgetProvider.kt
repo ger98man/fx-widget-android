@@ -47,8 +47,8 @@ class FxWidgetProvider : AppWidgetProvider() {
             )
             v.setTextViewText(R.id.status, Widgets.rateLine(repo, rates))
 
-            Converter.QUICK_AMOUNTS.zip(QUICK).forEach { (value, id) ->
-                v.setTextViewText(id, "+$value")
+            Converter.quickAmounts(repo.from, rates).zip(QUICK).forEach { (value, id) ->
+                v.setTextViewText(id, Converter.quickLabel(value))
                 v.setOnClickPendingIntent(id, Widgets.broadcast(context, cls, Widgets.ACTION_SET + value))
             }
             KEYS.forEach { (id, key) -> v.setOnClickPendingIntent(id, Widgets.broadcast(context, cls, Widgets.ACTION_KEY + key)) }

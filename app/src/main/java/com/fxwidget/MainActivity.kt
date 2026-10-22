@@ -148,8 +148,8 @@ class MainActivity : Activity() {
         val out = rates?.let { Converter.convert(amount, repo.from, repo.to, it) }
         result.text = out?.let { "${Converter.formatResult(it)} ${Converter.symbol(repo.to)}" } ?: "—"
 
-        Converter.QUICK_AMOUNTS.zip(presetViews).forEach { (value, view) ->
-            view.text = "+$value"
+        Converter.quickAmounts(repo.from, rates).zip(presetViews).forEach { (value, view) ->
+            view.text = Converter.quickLabel(value)
             view.setOnClickListener {
                 input.setText(Converter.addAmount(repo.amount, value))
                 input.setSelection(input.text.length)

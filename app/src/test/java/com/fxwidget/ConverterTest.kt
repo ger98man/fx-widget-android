@@ -41,6 +41,22 @@ class ConverterTest {
         assertEquals("112.5", Converter.addAmount("12.5", 100))
     }
 
+    @Test fun quickAmountsScaleWithCurrency() {
+        val rates = mapOf("USD" to 1.0, "EUR" to 0.89, "THB" to 33.6, "PLN" to 3.9, "JPY" to 151.0,
+            "KRW" to 1390.0, "VND" to 25400.0)
+        assertEquals(listOf(1, 2, 5, 10, 20, 50), Converter.quickAmounts("EUR", rates))
+        assertEquals(listOf(1, 5, 10, 50, 100, 500), Converter.quickAmounts("PLN", rates))
+        assertEquals(listOf(10, 50, 100, 500, 1000, 5000), Converter.quickAmounts("THB", rates))
+        assertEquals(listOf(100, 500, 1000, 5000, 10000, 50000), Converter.quickAmounts("JPY", rates))
+        assertEquals(500_000, Converter.quickAmounts("KRW", rates).last())
+        assertEquals(1_000_000, Converter.quickAmounts("VND", rates).last())
+        assertEquals(listOf(10, 50, 100, 500, 1000, 5000), Converter.quickAmounts("THB", null))
+        assertEquals("+5,000", Converter.quickLabel(5000))
+        assertEquals("+10k", Converter.quickLabel(10000))
+        assertEquals("+500k", Converter.quickLabel(500000))
+        assertEquals("+1M", Converter.quickLabel(1000000))
+    }
+
     @Test fun keypad() {
         assertEquals("5", Converter.applyKey("0", "5"))
         assertEquals("15", Converter.applyKey("1", "5"))

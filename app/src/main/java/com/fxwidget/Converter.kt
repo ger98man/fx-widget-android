@@ -76,8 +76,37 @@ object Converter {
 
     fun flag(currency: String): String = BY_CODE[currency]?.flag ?: "🏳️"
 
-    /** Quick add-amounts under the keypad (same for every currency). */
-    val QUICK_AMOUNTS = listOf(1, 10, 50, 100, 500, 1000)
+    /**
+     * Quick add-amounts under the keypad, scaled to how "heavy" the currency is:
+     * picked by units per 1 USD from the live rates (fallback table if none cached yet).
+     */
+    fun quickAmounts(currency: String, rates: Map<String, Double>?): List<Int> {
+        val perUsd = rates?.get(currency) ?: FALLBACK_PER_USD[currency] ?: 1.0
+        return when {
+            perUsd < 2 -> listOf(1, 2, 5, 10, 20, 50)                        // EUR, USD, GBP, CHF…
+            perUsd < 20 -> listOf(1, 5, 10, 50, 100, 500)                    // PLN, CNY, MYR, AED, kroner
+            perUsd < 100 -> listOf(10, 50, 100, 500, 1000, 5000)             // THB, RUB, INR, TRY, CZK
+            perUsd < 500 -> listOf(100, 500, 1000, 5000, 10000, 50000)       // JPY, HUF
+            perUsd < 5000 -> listOf(1000, 5000, 10000, 50000, 100000, 500000) // KRW
+            else -> listOf(10000, 50000, 100000, 200000, 500000, 1000000)    // VND, IDR
+        }
+    }
+
+    /** Rough units per USD, only used before the first rate download. */
+    private val FALLBACK_PER_USD = mapOf(
+        "THB" to 34.0, "EUR" to 0.9, "USD" to 1.0, "GBP" to 0.78, "RUB" to 80.0, "PLN" to 3.9,
+        "CNY" to 7.2, "JPY" to 150.0, "KRW" to 1400.0, "VND" to 25000.0, "MYR" to 4.5,
+        "SGD" to 1.3, "IDR" to 16000.0, "INR" to 85.0, "AED" to 3.67, "TRY" to 40.0,
+        "CHF" to 0.85, "CZK" to 22.0, "SEK" to 10.5, "NOK" to 10.5, "DKK" to 6.7,
+        "HUF" to 360.0, "AUD" to 1.5, "CAD" to 1.4,
+    )
+
+    /** Chip label: "+1,000" style grouping, short "k" form for very large steps. */
+    fun quickLabel(value: Int): String = when {
+        value >= 1_000_000 -> "+${value / 1_000_000}M"
+        value >= 10_000 -> "+${value / 1000}k"
+        else -> "+" + displayInput(value.toString())
+    }
 
     /** Typed amount with thousands grouping, keeping a trailing "." or decimals as typed. */
     fun displayInput(raw: String): String {
