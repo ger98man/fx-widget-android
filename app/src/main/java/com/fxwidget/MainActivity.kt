@@ -149,7 +149,7 @@ class MainActivity : Activity() {
         result.text = out?.let { "${Converter.formatResult(it)} ${Converter.symbol(repo.to)}" } ?: "—"
 
         Converter.presets(repo.from).zip(presetViews).forEach { (value, view) ->
-            view.text = "%,d".format(value)
+            view.text = "+" + Converter.displayInput(value.toString())
             view.setOnClickListener {
                 input.setText(Converter.addAmount(repo.amount, value))
                 input.setSelection(input.text.length)

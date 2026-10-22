@@ -48,7 +48,9 @@ class FxWidgetProvider : AppWidgetProvider() {
             v.setTextViewText(R.id.status, Widgets.rateLine(repo, rates))
 
             Converter.quickAmounts(repo.from).zip(QUICK).forEach { (value, id) ->
-                v.setTextViewText(id, "${Converter.displayInput(value.toString())} $fromSym")
+                // "+" says it adds; drop the symbol on 4+ digits so the chip stays readable
+                val label = "+" + Converter.displayInput(value.toString()) + if (value < 1000) " $fromSym" else ""
+                v.setTextViewText(id, label)
                 v.setOnClickPendingIntent(id, Widgets.broadcast(context, cls, Widgets.ACTION_SET + value))
             }
             KEYS.forEach { (id, key) -> v.setOnClickPendingIntent(id, Widgets.broadcast(context, cls, Widgets.ACTION_KEY + key)) }
