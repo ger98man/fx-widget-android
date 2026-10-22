@@ -57,8 +57,8 @@ class MainActivity : Activity() {
             val f = repo.from; repo.from = repo.to; repo.to = f
             render()
         }
-        fromBtn.setOnClickListener { repo.from = next(repo.from, repo.to); render() }
-        toBtn.setOnClickListener { repo.to = next(repo.to, repo.from); render() }
+        fromBtn.setOnClickListener { startActivity(CurrencyPickerActivity.intent(this, CurrencyPickerActivity.SIDE_FROM)) }
+        toBtn.setOnClickListener { startActivity(CurrencyPickerActivity.intent(this, CurrencyPickerActivity.SIDE_TO)) }
         findViewById<TextView>(R.id.refresh_btn).setOnClickListener { refresh() }
 
         banner = findViewById(R.id.update_banner)

@@ -44,8 +44,8 @@ class PresetWidgetProvider : AppWidgetProvider() {
             }
 
             v.setOnClickPendingIntent(R.id.swap_btn, Widgets.broadcast(context, cls, Widgets.ACTION_SWAP))
-            v.setOnClickPendingIntent(R.id.from_btn, Widgets.broadcast(context, cls, Widgets.ACTION_FROM))
-            v.setOnClickPendingIntent(R.id.to_btn, Widgets.broadcast(context, cls, Widgets.ACTION_TO))
+            v.setOnClickPendingIntent(R.id.from_btn, Widgets.picker(context, CurrencyPickerActivity.SIDE_FROM))
+            v.setOnClickPendingIntent(R.id.to_btn, Widgets.picker(context, CurrencyPickerActivity.SIDE_TO))
             v.setOnClickPendingIntent(R.id.refresh_btn, Widgets.broadcast(context, cls, Widgets.ACTION_REFRESH))
             v.setOnClickPendingIntent(R.id.presets, Widgets.openApp(context))
             v.setOnClickPendingIntent(R.id.status, Widgets.openApp(context))

@@ -20,6 +20,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".CurrencyPickerActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:taskAffinity=""
+            android:theme="@style/FxPickerDialog" />
+
         <receiver
             android:name=".PresetWidgetProvider"
             android:exported="true"

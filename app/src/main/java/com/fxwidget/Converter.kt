@@ -7,7 +7,39 @@ import java.util.Locale
 
 /** Pure conversion/input logic, independent of Android APIs. */
 object Converter {
-    val CURRENCIES = listOf("THB", "EUR", "USD", "GBP", "CHF", "JPY", "RUB", "CNY", "PLN", "CZK")
+    data class Currency(val code: String, val flag: String, val symbol: String, val name: String)
+
+    /** Picker order: the usual suspects first, then Asia, then the rest of Europe and beyond. */
+    val ALL = listOf(
+        Currency("THB", "🇹🇭", "฿", "Тайский бат"),
+        Currency("EUR", "🇪🇺", "€", "Евро"),
+        Currency("USD", "🇺🇸", "$", "Доллар США"),
+        Currency("GBP", "🇬🇧", "£", "Фунт стерлингов"),
+        Currency("RUB", "🇷🇺", "₽", "Российский рубль"),
+        Currency("PLN", "🇵🇱", "zł", "Польский злотый"),
+        Currency("CNY", "🇨🇳", "¥", "Китайский юань"),
+        Currency("JPY", "🇯🇵", "¥", "Японская иена"),
+        Currency("KRW", "🇰🇷", "₩", "Южнокорейская вона"),
+        Currency("VND", "🇻🇳", "₫", "Вьетнамский донг"),
+        Currency("MYR", "🇲🇾", "RM", "Малайзийский ринггит"),
+        Currency("SGD", "🇸🇬", "S$", "Сингапурский доллар"),
+        Currency("IDR", "🇮🇩", "Rp", "Индонезийская рупия"),
+        Currency("INR", "🇮🇳", "₹", "Индийская рупия"),
+        Currency("AED", "🇦🇪", "AED", "Дирхам ОАЭ"),
+        Currency("TRY", "🇹🇷", "₺", "Турецкая лира"),
+        Currency("CHF", "🇨🇭", "Fr", "Швейцарский франк"),
+        Currency("CZK", "🇨🇿", "Kč", "Чешская крона"),
+        Currency("SEK", "🇸🇪", "kr", "Шведская крона"),
+        Currency("NOK", "🇳🇴", "kr", "Норвежская крона"),
+        Currency("DKK", "🇩🇰", "kr", "Датская крона"),
+        Currency("HUF", "🇭🇺", "Ft", "Венгерский форинт"),
+        Currency("AUD", "🇦🇺", "A$", "Австралийский доллар"),
+        Currency("CAD", "🇨🇦", "C$", "Канадский доллар"),
+    )
+    val CURRENCIES = ALL.map { it.code }
+    private val BY_CODE = ALL.associateBy { it.code }
+
+    fun name(currency: String): String = BY_CODE[currency]?.name ?: currency
 
     /** Rates are quoted against USD (units of currency per 1 USD). */
     fun convert(amount: Double, from: String, to: String, rates: Map<String, Double>): Double? {
@@ -42,17 +74,15 @@ object Converter {
         }
     }
 
-    fun flag(currency: String): String = when (currency) {
-        "THB" -> "🇹🇭"; "EUR" -> "🇪🇺"; "USD" -> "🇺🇸"; "GBP" -> "🇬🇧"; "CHF" -> "🇨🇭"
-        "JPY" -> "🇯🇵"; "RUB" -> "🇷🇺"; "CNY" -> "🇨🇳"; "PLN" -> "🇵🇱"; "CZK" -> "🇨🇿"
-        else -> "🏳️"
-    }
+    fun flag(currency: String): String = BY_CODE[currency]?.flag ?: "🏳️"
 
     /** Four quick amounts under the keypad. */
     fun quickAmounts(currency: String): List<Int> = when (currency) {
         "THB" -> listOf(100, 500, 1000, 5000)
-        "JPY", "RUB" -> listOf(1000, 5000, 10000, 50000)
-        "CNY", "PLN", "CZK" -> listOf(50, 100, 500, 1000)
+        "JPY", "RUB", "INR" -> listOf(1000, 5000, 10000, 50000)
+        "KRW", "HUF" -> listOf(5000, 10000, 50000, 100000)
+        "VND", "IDR" -> listOf(50000, 100000, 500000, 1000000)
+        "CNY", "PLN", "CZK", "SEK", "NOK", "DKK", "TRY", "AED", "MYR" -> listOf(50, 100, 500, 1000)
         else -> listOf(10, 20, 50, 100)
     }
 
@@ -82,16 +112,14 @@ object Converter {
     /** Quick amounts shown on the compact widget, sized to the currency. */
     fun presets(currency: String): List<Int> = when (currency) {
         "THB" -> listOf(50, 100, 300, 500, 1000)
-        "JPY", "RUB" -> listOf(500, 1000, 2000, 5000, 10000)
-        "CNY", "PLN", "CZK" -> listOf(10, 50, 100, 200, 500)
+        "JPY", "RUB", "INR" -> listOf(500, 1000, 2000, 5000, 10000)
+        "KRW", "HUF" -> listOf(1000, 5000, 10000, 50000, 100000)
+        "VND", "IDR" -> listOf(10000, 50000, 100000, 500000, 1000000)
+        "CNY", "PLN", "CZK", "SEK", "NOK", "DKK", "TRY", "AED", "MYR" -> listOf(10, 50, 100, 200, 500)
         else -> listOf(5, 10, 20, 50, 100)
     }
 
-    fun symbol(currency: String): String = when (currency) {
-        "THB" -> "฿"; "EUR" -> "€"; "USD" -> "$"; "GBP" -> "£"; "JPY", "CNY" -> "¥"
-        "RUB" -> "₽"; "PLN" -> "zł"; "CZK" -> "Kč"; "CHF" -> "Fr"
-        else -> currency
-    }
+    fun symbol(currency: String): String = BY_CODE[currency]?.symbol ?: currency
 
     /** Compact money format: whole numbers from 100 up, two decimals below. */
     fun formatShort(value: Double): String {

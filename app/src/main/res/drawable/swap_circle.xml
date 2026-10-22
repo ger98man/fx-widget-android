@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
-    <solid android:color="#FF4FC3" />
-    <stroke android:width="3dp" android:color="#15181F" />
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- outer ring blends into the card so the button "cuts" the seam between rows -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#15181F" />
+        </shape>
+    </item>
+    <item android:bottom="4dp" android:left="4dp" android:right="4dp" android:top="4dp">
+        <shape android:shape="oval">
+            <gradient android:angle="315" android:endColor="#C2187F" android:startColor="#FF6AD0" />
+            <stroke android:width="1.5dp" android:color="#66FFFFFF" />
+        </shape>
+    </item>
+</layer-list>

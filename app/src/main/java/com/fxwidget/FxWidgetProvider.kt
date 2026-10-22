@@ -54,9 +54,13 @@ class FxWidgetProvider : AppWidgetProvider() {
                 v.setOnClickPendingIntent(id, Widgets.broadcast(context, cls, Widgets.ACTION_SET + value))
             }
             KEYS.forEach { (id, key) -> v.setOnClickPendingIntent(id, Widgets.broadcast(context, cls, Widgets.ACTION_KEY + key)) }
-            v.setOnClickPendingIntent(R.id.swap_btn, Widgets.broadcast(context, cls, Widgets.ACTION_SWAP))
-            v.setOnClickPendingIntent(R.id.from_row, Widgets.broadcast(context, cls, Widgets.ACTION_FROM))
-            v.setOnClickPendingIntent(R.id.to_row, Widgets.broadcast(context, cls, Widgets.ACTION_TO))
+            val swap = Widgets.broadcast(context, cls, Widgets.ACTION_SWAP)
+            v.setDisplayedChild(R.id.swap_btn, repo.swapCount % 2)
+            v.setOnClickPendingIntent(R.id.swap_btn, swap)
+            v.setOnClickPendingIntent(R.id.swap_a, swap)
+            v.setOnClickPendingIntent(R.id.swap_b, swap)
+            v.setOnClickPendingIntent(R.id.from_row, Widgets.picker(context, CurrencyPickerActivity.SIDE_FROM))
+            v.setOnClickPendingIntent(R.id.to_row, Widgets.picker(context, CurrencyPickerActivity.SIDE_TO))
             v.setOnClickPendingIntent(R.id.refresh_btn, Widgets.broadcast(context, cls, Widgets.ACTION_REFRESH))
             v.setOnClickPendingIntent(R.id.status, Widgets.openApp(context))
             manager.updateAppWidget(ids, v)

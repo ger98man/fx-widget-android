@@ -32,6 +32,12 @@ object Widgets {
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 
+    fun picker(ctx: Context, side: String): PendingIntent = PendingIntent.getActivity(
+        ctx, side.hashCode(),
+        CurrencyPickerActivity.intent(ctx, side).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+    )
+
     fun openApp(ctx: Context): PendingIntent = PendingIntent.getActivity(
         ctx, 0, Intent(ctx, MainActivity::class.java),
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
@@ -74,6 +80,7 @@ object Widgets {
                 val out = rates?.let { Converter.convert(repo.amount.toDoubleOrNull() ?: 0.0, repo.from, repo.to, it) }
                 if (out != null && out > 0) repo.amount = Converter.plain(out)
                 val f = repo.from; repo.from = repo.to; repo.to = f
+                repo.swapCount = repo.swapCount + 1
             }
             action == ACTION_FROM -> repo.from = next(repo.from, skip = repo.to)
             action == ACTION_TO -> repo.to = next(repo.to, skip = repo.from)
