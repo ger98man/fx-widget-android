@@ -17,6 +17,14 @@ class ConverterTest {
         assertNull(Converter.parseRates("garbage"))
     }
 
+    @Test fun presetsAndFormat() {
+        assertEquals(listOf(50, 100, 300, 500, 1000), Converter.presets("THB"))
+        assertEquals(listOf(5, 10, 20, 50, 100), Converter.presets("EUR"))
+        assertEquals("1.33", Converter.formatShort(1.3315))
+        assertEquals("3,774", Converter.formatShort(3774.4))
+        assertEquals("฿", Converter.symbol("THB"))
+    }
+
     @Test fun keypad() {
         assertEquals("5", Converter.applyKey("0", "5"))
         assertEquals("15", Converter.applyKey("1", "5"))

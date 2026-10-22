@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#202633"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView android:id="@+id/from_btn" android:layout_width="0dp" android:layout_height="48dp"
+            android:layout_weight="1" android:gravity="center" android:background="@drawable/key"
+            android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold" />
+        <TextView android:id="@+id/swap_btn" android:layout_width="56dp" android:layout_height="48dp"
+            android:gravity="center" android:textColor="#80CBC4" android:textSize="24sp" android:text="⇄" />
+        <TextView android:id="@+id/to_btn" android:layout_width="0dp" android:layout_height="48dp"
+            android:layout_weight="1" android:gravity="center" android:background="@drawable/key"
+            android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold" />
+    </LinearLayout>
+
+    <EditText android:id="@+id/input" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="28dp" android:gravity="end" android:inputType="numberDecimal"
+        android:backgroundTint="#80CBC4" android:textColor="#FFFFFF" android:textColorHint="#5C6578"
+        android:textSize="40sp" android:importantForAutofill="no" />
+
+    <TextView android:id="@+id/result" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" android:gravity="end" android:singleLine="true"
+        android:textColor="#80CBC4" android:textSize="40sp" android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
+        <TextView android:id="@+id/a0" style="@style/FxChip" />
+        <TextView android:id="@+id/a1" style="@style/FxChip" />
+        <TextView android:id="@+id/a2" style="@style/FxChip" />
+        <TextView android:id="@+id/a3" style="@style/FxChip" />
+        <TextView android:id="@+id/a4" style="@style/FxChip" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView android:id="@+id/status" android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:textColor="#9AA3B5" android:textSize="13sp" />
+        <TextView android:id="@+id/refresh_btn" android:layout_width="44dp" android:layout_height="44dp"
+            android:gravity="center" android:textColor="#9AA3B5" android:textSize="22sp" android:text="⟳" />
+    </LinearLayout>
+</LinearLayout>

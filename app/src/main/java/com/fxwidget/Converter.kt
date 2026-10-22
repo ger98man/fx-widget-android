@@ -41,6 +41,26 @@ object Converter {
         }
     }
 
+    /** Quick amounts shown on the compact widget, sized to the currency. */
+    fun presets(currency: String): List<Int> = when (currency) {
+        "THB" -> listOf(50, 100, 300, 500, 1000)
+        "JPY", "RUB" -> listOf(500, 1000, 2000, 5000, 10000)
+        "CNY", "PLN", "CZK" -> listOf(10, 50, 100, 200, 500)
+        else -> listOf(5, 10, 20, 50, 100)
+    }
+
+    fun symbol(currency: String): String = when (currency) {
+        "THB" -> "฿"; "EUR" -> "€"; "USD" -> "$"; "GBP" -> "£"; "JPY", "CNY" -> "¥"
+        "RUB" -> "₽"; "PLN" -> "zł"; "CZK" -> "Kč"; "CHF" -> "Fr"
+        else -> currency
+    }
+
+    /** Compact money format: whole numbers from 100 up, two decimals below. */
+    fun formatShort(value: Double): String {
+        val pattern = if (value >= 100) "#,##0" else "#,##0.00"
+        return DecimalFormat(pattern, DecimalFormatSymbols(Locale.US)).format(value)
+    }
+
     fun format(value: Double): String {
         val pattern = if (value >= 1000) "#,##0.00" else "#,##0.00##"
         return DecimalFormat(pattern, DecimalFormatSymbols(Locale.US)).format(value)

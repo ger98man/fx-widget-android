@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">FX Widget</string>
+    <string name="widget_keypad">FX: клавиатура</string>
+    <string name="widget_keypad_desc">Ввод любой суммы прямо на виджете</string>
+    <string name="widget_presets">FX: быстрые суммы</string>
+    <string name="widget_presets_desc">Курс и готовые суммы 50 / 100 / 300 / 500 / 1000 ฿</string>
 </resources>
