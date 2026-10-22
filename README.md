@@ -3,4 +3,4 @@ Home-screen widget (Kotlin) converting currencies, e.g. THB → EUR.
 
 - Tap-keypad directly on the widget; tap the currency chips to cycle, ⇄ to swap.
 - Rates come from open.er-api.com and are cached; offline the last cached rates are used (status line shows age; tap it to refresh).
-- Build: `./gradlew assembleDebug`; tests: `./gradlew testDebugUnitTest`.
+- Build: `gradle assembleDebug` (Gradle 8.9); tests: `gradle testDebugUnitTest`. GitHub Actions builds the APK on every push — download it from the run's Artifacts.
