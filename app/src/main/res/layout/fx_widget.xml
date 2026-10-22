@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Everything scales with the widget: height is split by weights
+  (rows 5 : rate 0.7 : keys 3×1.4 : quick amounts 1.3) and every text auto-sizes
+  to fill its cell, so a bigger widget means bigger numbers, not more empty space.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="10dp">
 
     <!-- Two currency rows with the swap button sitting on the seam between them -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="5">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -19,8 +24,10 @@
 
             <LinearLayout android:id="@+id/from_row" style="@style/FxRow"
                 android:background="@drawable/row_active">
-                <TextView android:id="@+id/from_flag" style="@style/FxFlag" />
-                <TextView android:id="@+id/from_btn" style="@style/FxCode" />
+                <LinearLayout style="@style/FxRowLabel">
+                    <TextView android:id="@+id/from_flag" style="@style/FxFlag" />
+                    <TextView android:id="@+id/from_btn" style="@style/FxCode" />
+                </LinearLayout>
                 <TextView android:id="@+id/amount" style="@style/FxAmount"
                     android:textColor="#FFFFFF" />
             </LinearLayout>
@@ -28,8 +35,10 @@
             <LinearLayout android:id="@+id/to_row" style="@style/FxRow"
                 android:layout_marginTop="4dp"
                 android:background="@drawable/row_plain">
-                <TextView android:id="@+id/to_flag" style="@style/FxFlag" />
-                <TextView android:id="@+id/to_btn" style="@style/FxCode" />
+                <LinearLayout style="@style/FxRowLabel">
+                    <TextView android:id="@+id/to_flag" style="@style/FxFlag" />
+                    <TextView android:id="@+id/to_btn" style="@style/FxCode" />
+                </LinearLayout>
                 <TextView android:id="@+id/result" style="@style/FxAmount"
                     android:textColor="#FF4FC3" />
             </LinearLayout>
@@ -37,34 +46,34 @@
 
         <ImageView
             android:id="@+id/swap_btn"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_gravity="center"
             android:background="@drawable/swap_circle"
             android:contentDescription="swap"
-            android:scaleType="center"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_swap" />
     </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="28dp"
-        android:layout_marginTop="2dp"
+        android:layout_height="0dp"
+        android:layout_weight="0.7"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="4dp">
-        <TextView android:id="@+id/status" android:layout_width="0dp" android:layout_height="wrap_content"
-            android:layout_weight="1" android:singleLine="true" android:ellipsize="end"
-            android:textColor="#AEB5C6" android:textSize="13sp" />
-        <ImageView android:id="@+id/refresh_btn" android:layout_width="28dp" android:layout_height="match_parent"
-            android:contentDescription="refresh" android:scaleType="center" android:src="@drawable/ic_refresh" />
+        android:paddingStart="6dp">
+        <TextView android:id="@+id/status" style="@style/FxStatus" />
+        <ImageView android:id="@+id/refresh_btn" android:layout_width="36dp" android:layout_height="match_parent"
+            android:contentDescription="refresh" android:padding="6dp" android:scaleType="fitCenter"
+            android:src="@drawable/ic_refresh" />
     </LinearLayout>
 
     <LinearLayout style="@style/FxKeyRow">
         <TextView android:id="@+id/k7" style="@style/FxKey" android:text="7" />
         <TextView android:id="@+id/k8" style="@style/FxKey" android:text="8" />
         <TextView android:id="@+id/k9" style="@style/FxKey" android:text="9" />
-        <ImageView android:id="@+id/kback" style="@style/FxKey" android:scaleType="center"
+        <ImageView android:id="@+id/kback" style="@style/FxKeyIcon"
             android:contentDescription="backspace" android:src="@drawable/ic_backspace" />
     </LinearLayout>
     <LinearLayout style="@style/FxKeyRow">
@@ -80,11 +89,12 @@
         <TextView android:id="@+id/kdot" style="@style/FxKey" android:text="." android:textColor="#8B93A7" />
     </LinearLayout>
 
-    <!-- Quick amounts -->
+    <!-- Quick amounts: tap adds to the sum, C clears -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="42dp"
-        android:layout_marginTop="6dp"
+        android:layout_height="0dp"
+        android:layout_weight="1.3"
+        android:layout_marginTop="4dp"
         android:orientation="horizontal">
         <TextView android:id="@+id/q0" style="@style/FxQuick" />
         <TextView android:id="@+id/q1" style="@style/FxQuick" />

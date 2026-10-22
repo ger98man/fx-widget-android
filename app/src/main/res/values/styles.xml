@@ -1,30 +1,48 @@
 <resources>
-    <!-- Currency rows -->
+    <!-- Keypad widget: every text auto-sizes to fill its cell -->
     <style name="FxRow">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:minHeight">52dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:orientation">horizontal</item>
-        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingStart">10dp</item>
         <item name="android:paddingEnd">14dp</item>
     </style>
 
+    <style name="FxRowLabel">
+        <item name="android:layout_width">64dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
+
     <style name="FxFlag">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">26sp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1.4</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMinTextSize">10sp</item>
+        <item name="android:autoSizeMaxTextSize">48sp</item>
     </style>
 
     <style name="FxCode">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_marginStart">8dp</item>
-        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:includeFontPadding">false</item>
         <item name="android:textColor">#C4CAD8</item>
-        <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMinTextSize">9sp</item>
+        <item name="android:autoSizeMaxTextSize">28sp</item>
     </style>
 
     <style name="FxAmount">
@@ -32,19 +50,37 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_marginStart">8dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
         <item name="android:gravity">end|center_vertical</item>
         <item name="android:maxLines">1</item>
+        <item name="android:includeFontPadding">false</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">28sp</item>
         <item name="android:autoSizeTextType">uniform</item>
-        <item name="android:autoSizeMinTextSize">16sp</item>
-        <item name="android:autoSizeMaxTextSize">36sp</item>
+        <item name="android:autoSizeMinTextSize">12sp</item>
+        <item name="android:autoSizeMaxTextSize">200sp</item>
+        <item name="android:autoSizeStepGranularity">1sp</item>
     </style>
 
-    <!-- Keypad -->
+    <style name="FxStatus">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textColor">#AEB5C6</item>
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMinTextSize">9sp</item>
+        <item name="android:autoSizeMaxTextSize">18sp</item>
+    </style>
+
     <style name="FxKeyRow">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1.4</item>
         <item name="android:orientation">horizontal</item>
     </style>
 
@@ -53,10 +89,26 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_margin">2dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
         <item name="android:gravity">center</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:includeFontPadding">false</item>
         <item name="android:background">@drawable/key</item>
         <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textSize">17sp</item>
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMinTextSize">12sp</item>
+        <item name="android:autoSizeMaxTextSize">40sp</item>
+    </style>
+
+    <style name="FxKeyIcon">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:background">@drawable/key</item>
     </style>
 
     <style name="FxQuick">
@@ -65,12 +117,19 @@
         <item name="android:layout_weight">1</item>
         <item name="android:layout_marginStart">2dp</item>
         <item name="android:layout_marginEnd">2dp</item>
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
         <item name="android:gravity">center</item>
-        <item name="android:background">@drawable/chip</item>
         <item name="android:maxLines">1</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:background">@drawable/chip</item>
         <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMinTextSize">9sp</item>
+        <item name="android:autoSizeMaxTextSize">26sp</item>
     </style>
 
     <!-- Quick-amounts widget -->
