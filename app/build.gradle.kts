@@ -10,8 +10,8 @@ android {
         applicationId = "com.fxwidget"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
+        versionName = System.getenv("APP_VERSION") ?: "1.1-dev"
     }
     // Fixed debug key in the repo so every CI build installs over the previous one
     signingConfigs {
