@@ -64,6 +64,17 @@ class RateRepository(context: Context) {
         get() = prefs.getString("amount", "100") ?: "100"
         set(v) = prefs.edit().putString("amount", v).apply()
 
+    /** Currencies offered in the picker; set in the app's settings. Default: all. */
+    var enabledCurrencies: Set<String>
+        get() = prefs.getStringSet("enabled_currencies", null)?.toSet() ?: Converter.CURRENCIES.toSet()
+        set(v) = prefs.edit().putStringSet("enabled_currencies", v).apply()
+
+    /** Picker list in canonical order: enabled ones plus whatever is selected right now. */
+    fun pickerCurrencies(): List<Converter.Currency> {
+        val keep = enabledCurrencies + from + to
+        return Converter.ALL.filter { it.code in keep }
+    }
+
     var from: String
         get() = prefs.getString("from", "THB") ?: "THB"
         set(v) = prefs.edit().putString("from", v).apply()

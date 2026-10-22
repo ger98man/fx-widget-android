@@ -20,7 +20,7 @@
     <ListView
         android:id="@+id/picker_list"
         android:layout_width="match_parent"
-        android:layout_height="440dp"
+        android:layout_height="wrap_content"
         android:divider="@null"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"

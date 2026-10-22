@@ -64,6 +64,9 @@ class MainActivity : Activity() {
         banner = findViewById(R.id.update_banner)
         banner.setOnClickListener { pendingRelease?.let { startUpdate(it) } }
         findViewById<TextView>(R.id.version).text = "v" + Updater.installedVersion(this)
+        findViewById<TextView>(R.id.settings_btn).setOnClickListener {
+            startActivity(android.content.Intent(this, SettingsActivity::class.java))
+        }
 
         RefreshWorker.schedulePeriodic(this)
         render()

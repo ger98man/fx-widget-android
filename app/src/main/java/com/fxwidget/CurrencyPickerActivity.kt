@@ -29,26 +29,28 @@ class CurrencyPickerActivity : Activity() {
             if (side == SIDE_FROM) "Из какой валюты" else "В какую валюту"
 
         val list = findViewById<ListView>(R.id.picker_list)
-        list.adapter = Adapter(this, current, other)
-        list.setSelection((Converter.CURRENCIES.indexOf(current) - 2).coerceAtLeast(0))
+        val items = repo.pickerCurrencies()
+        list.adapter = Adapter(this, items, current, other)
+        list.setSelection((items.indexOfFirst { it.code == current } - 2).coerceAtLeast(0))
         list.setOnItemClickListener { _, _, pos, _ ->
-            pick(this, side, Converter.CURRENCIES[pos])
+            pick(this, side, items[pos].code)
             finish()
         }
     }
 
     private class Adapter(
         private val ctx: Context,
+        private val items: List<Converter.Currency>,
         private val current: String,
         private val other: String,
     ) : BaseAdapter() {
-        override fun getCount() = Converter.ALL.size
-        override fun getItem(position: Int) = Converter.ALL[position]
+        override fun getCount() = items.size
+        override fun getItem(position: Int) = items[position]
         override fun getItemId(position: Int) = position.toLong()
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val v = convertView ?: View.inflate(ctx, R.layout.currency_row, null)
-            val c = Converter.ALL[position]
+            val c = items[position]
             v.findViewById<TextView>(R.id.row_flag).text = c.flag
             v.findViewById<TextView>(R.id.row_code).text = c.code
             v.findViewById<TextView>(R.id.row_name).text = when (c.code) {
