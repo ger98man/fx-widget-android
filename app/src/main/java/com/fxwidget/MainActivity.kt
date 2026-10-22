@@ -1,7 +1,12 @@
 package com.fxwidget
 
 import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.view.View
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
@@ -21,6 +26,9 @@ class MainActivity : Activity() {
     private lateinit var fromBtn: TextView
     private lateinit var toBtn: TextView
     private lateinit var presetViews: List<TextView>
+    private lateinit var banner: TextView
+    private var pendingRelease: Updater.Release? = null
+    private var installing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +61,10 @@ class MainActivity : Activity() {
         toBtn.setOnClickListener { repo.to = next(repo.to, repo.from); render() }
         findViewById<TextView>(R.id.refresh_btn).setOnClickListener { refresh() }
 
+        banner = findViewById(R.id.update_banner)
+        banner.setOnClickListener { pendingRelease?.let { startUpdate(it) } }
+        findViewById<TextView>(R.id.version).text = "v" + Updater.installedVersion(this)
+
         RefreshWorker.schedulePeriodic(this)
         render()
     }
@@ -60,6 +72,51 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
         refresh()
+        checkUpdate()
+    }
+
+    private fun checkUpdate() {
+        if (installing) return
+        thread {
+            val release = Updater.checkForUpdate(this)
+            runOnUiThread {
+                pendingRelease = release
+                if (release == null) {
+                    banner.visibility = View.GONE
+                } else {
+                    banner.text = "Доступна версия v${release.version} — нажми, чтобы обновить"
+                    banner.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
+    private fun startUpdate(release: Updater.Release) {
+        // One-time: Android must allow this app to install APKs
+        if (Build.VERSION.SDK_INT >= 26 && !packageManager.canRequestPackageInstalls()) {
+            banner.text = "Разреши установку из этого приложения и вернись сюда"
+            startActivity(
+                Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName")),
+            )
+            return
+        }
+        installing = true
+        banner.isEnabled = false
+        banner.text = "Скачиваю v${release.version}…"
+        thread {
+            try {
+                Updater.downloadAndInstall(this, release) { pct ->
+                    if (pct >= 0) runOnUiThread { banner.text = "Скачиваю v${release.version}… $pct%" }
+                }
+                runOnUiThread { banner.text = "Подтверди установку в окне Android" }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    banner.text = "Не удалось скачать (${e.javaClass.simpleName}) — нажми, чтобы повторить"
+                }
+            } finally {
+                runOnUiThread { installing = false; banner.isEnabled = true }
+            }
+        }
     }
 
     private fun refresh() {

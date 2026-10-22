@@ -7,6 +7,10 @@
     android:orientation="vertical"
     android:padding="20dp">
 
+    <TextView android:id="@+id/update_banner" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp" android:background="@drawable/update_bg" android:padding="14dp"
+        android:textColor="#FFFFFF" android:textSize="15sp" android:textStyle="bold" android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -53,4 +57,7 @@
         <TextView android:id="@+id/refresh_btn" android:layout_width="44dp" android:layout_height="44dp"
             android:gravity="center" android:textColor="#9AA3B5" android:textSize="22sp" android:text="⟳" />
     </LinearLayout>
+
+    <TextView android:id="@+id/version" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" android:gravity="end" android:textColor="#5C6578" android:textSize="11sp" />
 </LinearLayout>
