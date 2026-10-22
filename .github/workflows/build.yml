@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       # Bump the first two numbers by hand; the last one is the build number
-      APP_VERSION: 1.1.${{ github.run_number }}
+      APP_VERSION: 1.2.${{ github.run_number }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-java@v5

@@ -32,6 +32,7 @@ object Converter {
     /** Applies a keypad key ("0".."9", ".", "C") to the current amount text. */
     fun applyKey(current: String, key: String): String = when (key) {
         "C" -> "0"
+        "B" -> current.dropLast(1).ifEmpty { "0" }
         "." -> if (current.contains('.')) current else "$current."
         else -> when {
             current == "0" -> key
@@ -39,6 +40,39 @@ object Converter {
             current.substringAfter('.', "").length >= 2 && current.contains('.') -> current
             else -> current + key
         }
+    }
+
+    fun flag(currency: String): String = when (currency) {
+        "THB" -> "🇹🇭"; "EUR" -> "🇪🇺"; "USD" -> "🇺🇸"; "GBP" -> "🇬🇧"; "CHF" -> "🇨🇭"
+        "JPY" -> "🇯🇵"; "RUB" -> "🇷🇺"; "CNY" -> "🇨🇳"; "PLN" -> "🇵🇱"; "CZK" -> "🇨🇿"
+        else -> "🏳️"
+    }
+
+    /** Four quick amounts under the keypad. */
+    fun quickAmounts(currency: String): List<Int> = when (currency) {
+        "THB" -> listOf(100, 500, 1000, 5000)
+        "JPY", "RUB" -> listOf(1000, 5000, 10000, 50000)
+        "CNY", "PLN", "CZK" -> listOf(50, 100, 500, 1000)
+        else -> listOf(10, 20, 50, 100)
+    }
+
+    /** Typed amount with thousands grouping, keeping a trailing "." or decimals as typed. */
+    fun displayInput(raw: String): String {
+        val intPart = raw.substringBefore('.')
+        val grouped = intPart.toLongOrNull()?.let {
+            DecimalFormat("#,##0", DecimalFormatSymbols(Locale.US)).format(it)
+        } ?: intPart
+        return if (raw.contains('.')) grouped + "." + raw.substringAfter('.') else grouped
+    }
+
+    /** Machine amount for re-entry: up to 2 decimals, no trailing zeros, no grouping. */
+    fun plain(value: Double): String =
+        String.format(Locale.US, "%.2f", value).trimEnd('0').trimEnd('.')
+
+    /** Big result number: 2 decimals, whole numbers from 10 000 up. */
+    fun formatResult(value: Double): String {
+        val pattern = if (value >= 10000) "#,##0" else "#,##0.00"
+        return DecimalFormat(pattern, DecimalFormatSymbols(Locale.US)).format(value)
     }
 
     /** Quick amounts shown on the compact widget, sized to the currency. */

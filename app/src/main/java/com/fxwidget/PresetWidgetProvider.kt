@@ -33,13 +33,13 @@ class PresetWidgetProvider : AppWidgetProvider() {
             val toSym = Converter.symbol(repo.to)
 
             val v = RemoteViews(context.packageName, R.layout.preset_widget)
-            v.setTextViewText(R.id.from_btn, repo.from)
-            v.setTextViewText(R.id.to_btn, repo.to)
+            v.setTextViewText(R.id.from_btn, "${Converter.flag(repo.from)}  ${repo.from}")
+            v.setTextViewText(R.id.to_btn, "${Converter.flag(repo.to)}  ${repo.to}")
             v.setTextViewText(R.id.status, Widgets.rateLine(repo, rates))
 
             Converter.presets(repo.from).zip(CELLS).forEach { (amount, cell) ->
                 val out = rates?.let { Converter.convert(amount.toDouble(), repo.from, repo.to, it) }
-                v.setTextViewText(cell.first, "%,d %s".format(amount, fromSym))
+                v.setTextViewText(cell.first, "${Converter.displayInput(amount.toString())} $fromSym")
                 v.setTextViewText(cell.second, out?.let { "${Converter.formatShort(it)} $toSym" } ?: "—")
             }
 

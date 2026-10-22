@@ -139,14 +139,14 @@ class MainActivity : Activity() {
 
     private fun render() {
         val rates = repo.cachedRates()
-        fromBtn.text = repo.from
-        toBtn.text = repo.to
+        fromBtn.text = "${Converter.flag(repo.from)}  ${repo.from}"
+        toBtn.text = "${Converter.flag(repo.to)}  ${repo.to}"
         input.hint = "0 ${Converter.symbol(repo.from)}"
         status.text = Widgets.rateLine(repo, rates)
 
         val amount = repo.amount.toDoubleOrNull() ?: 0.0
         val out = rates?.let { Converter.convert(amount, repo.from, repo.to, it) }
-        result.text = out?.let { "${Converter.format(it)} ${Converter.symbol(repo.to)}" } ?: "—"
+        result.text = out?.let { "${Converter.formatResult(it)} ${Converter.symbol(repo.to)}" } ?: "—"
 
         Converter.presets(repo.from).zip(presetViews).forEach { (value, view) ->
             view.text = "%,d".format(value)

@@ -25,6 +25,20 @@ class ConverterTest {
         assertEquals("฿", Converter.symbol("THB"))
     }
 
+    @Test fun displayAndBackspace() {
+        assertEquals("1,250", Converter.displayInput("1250"))
+        assertEquals("12,500.5", Converter.displayInput("12500.5"))
+        assertEquals("3.", Converter.displayInput("3."))
+        assertEquals("12", Converter.applyKey("125", "B"))
+        assertEquals("0", Converter.applyKey("5", "B"))
+        assertEquals("33.13", Converter.formatResult(33.1312))
+        assertEquals("47,163", Converter.formatResult(47162.9))
+        assertEquals("🇹🇭", Converter.flag("THB"))
+        assertEquals("33.13", Converter.plain(33.1312))
+        assertEquals("1250", Converter.plain(1250.0))
+        assertEquals("33.1", Converter.plain(33.1))
+    }
+
     @Test fun keypad() {
         assertEquals("5", Converter.applyKey("0", "5"))
         assertEquals("15", Converter.applyKey("1", "5"))
