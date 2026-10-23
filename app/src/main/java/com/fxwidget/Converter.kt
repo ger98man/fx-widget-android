@@ -49,6 +49,31 @@ object Converter {
         return amount / f * t
     }
 
+    // ---- fixed (exchange-office) rates -------------------------------------------
+    // Stored once per pair as "A/B" -> units of B per 1 A, with A < B alphabetically,
+    // so "1 € = 36.50 ฿" and "1 ฿ = 0.0274 €" are the same entry.
+
+    fun pairKey(a: String, b: String): String = if (a < b) "$a/$b" else "$b/$a"
+
+    /** Units of [to] per 1 [from] from the fixed table, or null if this pair has none. */
+    fun fixedRate(from: String, to: String, fixed: Map<String, Double>): Double? {
+        if (from == to) return 1.0
+        val v = fixed[pairKey(from, to)]?.takeIf { it > 0 } ?: return null
+        return if (from < to) v else 1 / v
+    }
+
+    /** Stores "1 [from] = [perFrom] [to]". */
+    fun withFixed(fixed: Map<String, Double>, from: String, to: String, perFrom: Double): Map<String, Double> =
+        fixed + (pairKey(from, to) to if (from < to) perFrom else 1 / perFrom)
+
+    /** Rate for editing: up to 4 decimals, no trailing zeros (36.5, 0.0274, 25800). */
+    fun plainRate(value: Double): String =
+        String.format(Locale.US, "%.4f", value).trimEnd('0').trimEnd('.')
+
+    /** Readable direction for a rate (units of [to] per 1 [from]): the side where 1 unit is worth ≥ 1 of the other. */
+    fun bigSide(from: String, to: String, rate: Double?): Pair<String, String> =
+        if ((rate ?: 1.0) >= 1) from to to else to to from
+
     fun parseRates(json: String): Map<String, Double>? = try {
         val obj = JSONObject(json)
         if (obj.optString("result") != "success") null

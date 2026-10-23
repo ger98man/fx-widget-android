@@ -27,6 +27,13 @@ class MainActivity : Activity() {
     private lateinit var toBtn: TextView
     private lateinit var presetViews: List<TextView>
     private lateinit var banner: TextView
+    private lateinit var modeBank: TextView
+    private lateinit var modeFix: TextView
+    private lateinit var fixedRow: View
+    private lateinit var fixedInput: EditText
+    private var fixedA = "EUR"
+    private var fixedB = "THB"
+    private var settingFixedText = false
     private var pendingRelease: Updater.Release? = null
     private var installing = false
 
@@ -60,6 +67,28 @@ class MainActivity : Activity() {
         fromBtn.setOnClickListener { startActivity(CurrencyPickerActivity.intent(this, CurrencyPickerActivity.SIDE_FROM)) }
         toBtn.setOnClickListener { startActivity(CurrencyPickerActivity.intent(this, CurrencyPickerActivity.SIDE_TO)) }
         findViewById<TextView>(R.id.refresh_btn).setOnClickListener { refresh() }
+
+        modeBank = findViewById(R.id.mode_bank)
+        modeFix = findViewById(R.id.mode_fix)
+        fixedRow = findViewById(R.id.fixed_row)
+        fixedInput = findViewById(R.id.fixed_input)
+        modeBank.setOnClickListener { repo.rateMode = "bank"; render(); Widgets.updateAll(this) }
+        modeFix.setOnClickListener {
+            repo.rateMode = "fix"; render(); Widgets.updateAll(this)
+            if (repo.fixedRate() == null) fixedInput.requestFocus()
+        }
+        fixedInput.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (settingFixedText) return
+                val v = s.toString().replace(',', '.').toDoubleOrNull()
+                if (v != null && v > 0) repo.setFixed(fixedA, fixedB, v) else repo.clearFixed(fixedA, fixedB)
+                render()
+                Widgets.updateAll(this@MainActivity)
+            }
+            override fun beforeTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) {}
+            override fun onTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) {}
+        })
+        findViewById<TextView>(R.id.fixed_clear).setOnClickListener { fixedInput.setText("") }
 
         banner = findViewById(R.id.update_banner)
         banner.setOnClickListener { pendingRelease?.let { startUpdate(it) } }
@@ -140,15 +169,38 @@ class MainActivity : Activity() {
         return l[i]
     }
 
+    /** Mode chips + the "1 € = [ … ] ฿" editor, written in the readable direction. */
+    private fun renderMode() {
+        val fix = repo.rateMode == "fix"
+        modeBank.setBackgroundResource(if (fix) R.drawable.chip else R.drawable.row_active)
+        modeFix.setBackgroundResource(if (fix) R.drawable.row_active else R.drawable.chip)
+        modeBank.setTextColor(if (fix) 0xFF8B93A7.toInt() else 0xFFFFFFFF.toInt())
+        modeFix.setTextColor(if (fix) 0xFFFF4FC3.toInt() else 0xFF8B93A7.toInt())
+        fixedRow.visibility = if (fix) View.VISIBLE else View.GONE
+
+        val (a, b) = Converter.bigSide(repo.from, repo.to, repo.bankRate() ?: repo.fixedRate())
+        val pairChanged = a != fixedA || b != fixedB
+        fixedA = a; fixedB = b
+        findViewById<TextView>(R.id.fixed_label).text = "${Converter.flag(a)} 1 ${Converter.symbol(a)} ="
+        findViewById<TextView>(R.id.fixed_unit).text = Converter.symbol(b)
+        if (pairChanged || !fixedInput.hasFocus()) {
+            settingFixedText = true
+            fixedInput.setText(repo.fixedRate(a, b)?.let { Converter.plainRate(it) } ?: "")
+            fixedInput.hint = repo.bankRate(a, b)?.let { "банк ${Converter.formatShort(it)}" } ?: "курс обменника"
+            settingFixedText = false
+        }
+    }
+
     private fun render() {
         val rates = repo.cachedRates()
         fromBtn.text = "${Converter.flag(repo.from)}  ${repo.from}"
         toBtn.text = "${Converter.flag(repo.to)}  ${repo.to}"
         input.hint = "0 ${Converter.symbol(repo.from)}"
-        status.text = Widgets.rateLine(repo, rates)
+        status.text = Widgets.rateLine(repo)
+        renderMode()
 
         val amount = repo.amount.toDoubleOrNull() ?: 0.0
-        val out = rates?.let { Converter.convert(amount, repo.from, repo.to, it) }
+        val out = repo.convert(amount)
         result.text = out?.let { "${Converter.formatResult(it)} ${Converter.symbol(repo.to)}" } ?: "—"
 
         Converter.quickAmounts(repo.from, rates).zip(presetViews).forEach { (value, view) ->

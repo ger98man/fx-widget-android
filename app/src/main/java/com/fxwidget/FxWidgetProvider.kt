@@ -57,7 +57,7 @@ class FxWidgetProvider : AppWidgetProvider() {
             val repo = RateRepository(context)
             val rates = repo.cachedRates()
             val amount = repo.amount
-            val result = rates?.let { Converter.convert(amount.toDoubleOrNull() ?: 0.0, repo.from, repo.to, it) }
+            val result = repo.convert(amount.toDoubleOrNull() ?: 0.0)
             val cls = FxWidgetProvider::class.java
             val fromSym = Converter.symbol(repo.from)
 
@@ -71,7 +71,9 @@ class FxWidgetProvider : AppWidgetProvider() {
                 R.id.result,
                 result?.let { "${Converter.formatResult(it)} ${Converter.symbol(repo.to)}" } ?: "—",
             )
-            v.setTextViewText(R.id.status, Widgets.rateLine(repo, rates))
+            v.setTextViewText(R.id.status, Widgets.rateLine(repo))
+            v.setTextViewText(R.id.mode_badge, Widgets.modeLabel(repo))
+            v.setOnClickPendingIntent(R.id.mode_badge, Widgets.broadcast(context, cls, Widgets.ACTION_MODE))
 
             Converter.quickAmounts(repo.from, rates).zip(QUICK).forEach { (value, id) ->
                 v.setTextViewText(id, Converter.quickLabel(value))
@@ -87,7 +89,10 @@ class FxWidgetProvider : AppWidgetProvider() {
             v.setOnClickPendingIntent(R.id.to_row, Widgets.picker(context, CurrencyPickerActivity.SIDE_TO))
             v.setOnClickPendingIntent(R.id.refresh_btn, Widgets.broadcast(context, cls, Widgets.ACTION_REFRESH))
             v.setOnClickPendingIntent(R.id.status, Widgets.openApp(context))
-            applyTheme(v, Themes.byId(repo.themeId))
+            val theme = Themes.byId(repo.themeId)
+            applyTheme(v, theme)
+            v.setInt(R.id.mode_badge, "setBackgroundResource", if (repo.usingFixed()) theme.row else theme.chip)
+            v.setTextColor(R.id.mode_badge, if (repo.usingFixed()) theme.accent else theme.secondary)
             manager.updateAppWidget(ids, v)
         }
     }

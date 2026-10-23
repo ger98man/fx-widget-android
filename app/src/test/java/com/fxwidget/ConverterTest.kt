@@ -57,6 +57,21 @@ class ConverterTest {
         assertEquals("+1M", Converter.quickLabel(1000000))
     }
 
+    @Test fun fixedRatesWorkBothWays() {
+        var fixed = Converter.withFixed(emptyMap(), "EUR", "THB", 36.5)
+        assertEquals(36.5, Converter.fixedRate("EUR", "THB", fixed)!!, 1e-9)
+        assertEquals(1 / 36.5, Converter.fixedRate("THB", "EUR", fixed)!!, 1e-9)
+        assertNull(Converter.fixedRate("USD", "THB", fixed))
+        // entered from the other side: "1 $ = 33 ฿" (THB < USD alphabetically)
+        fixed = Converter.withFixed(fixed, "USD", "THB", 33.0)
+        assertEquals(33.0, Converter.fixedRate("USD", "THB", fixed)!!, 1e-9)
+        assertEquals(1 / 33.0, Converter.fixedRate("THB", "USD", fixed)!!, 1e-9)
+        assertEquals("EUR" to "THB", Converter.bigSide("THB", "EUR", 1 / 36.5))
+        assertEquals("EUR" to "THB", Converter.bigSide("EUR", "THB", 36.5))
+        assertEquals("36.5", Converter.plainRate(36.5))
+        assertEquals("0.0274", Converter.plainRate(0.02739726))
+    }
+
     @Test fun keypad() {
         assertEquals("5", Converter.applyKey("0", "5"))
         assertEquals("15", Converter.applyKey("1", "5"))

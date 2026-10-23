@@ -17,6 +17,7 @@ object Widgets {
     const val ACTION_FROM = "com.fxwidget.FROM"
     const val ACTION_TO = "com.fxwidget.TO"
     const val ACTION_REFRESH = "com.fxwidget.REFRESH"
+    const val ACTION_MODE = "com.fxwidget.MODE"
 
     fun updateAll(ctx: Context, swapped: Boolean = false) {
         val mgr = AppWidgetManager.getInstance(ctx)
@@ -43,20 +44,31 @@ object Widgets {
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 
-    fun rateLine(repo: RateRepository, rates: Map<String, Double>?): String {
-        if (rates == null) {
+    /** Short badge text for the current mode. */
+    fun modeLabel(repo: RateRepository): String = if (repo.usingFixed()) "ФИКС" else "БАНК"
+
+    fun rateLine(repo: RateRepository): String {
+        val r = repo.rate()
+        if (r == null) {
             val err = repo.lastError?.let { " ($it)" } ?: ""
             return "Нет курса — нажми ⟳ или открой приложение$err"
         }
         // Show the "big" side: 1 € = 37.74 ฿ reads better than 1 ฿ = 0.0265 €
-        val (a, b) = if ((Converter.convert(1.0, repo.from, repo.to, rates) ?: 0.0) >= 1)
-            repo.from to repo.to else repo.to to repo.from
-        val v = Converter.convert(1.0, a, b, rates) ?: 0.0
+        val (a, b) = Converter.bigSide(repo.from, repo.to, r)
+        val v = if (a == repo.from) r else 1 / r
+        val base = "1 ${Converter.symbol(a)} = ${Converter.formatShort(v)} ${Converter.symbol(b)}"
+        if (repo.usingFixed()) {
+            // how the office rate compares with the bank one, from the "big" side
+            val bank = repo.bankRate(a, b) ?: return base
+            val pct = (v / bank - 1) * 100
+            return base + " · банк " + Converter.formatShort(bank) + " (" + String.format(java.util.Locale.US, "%+.1f%%", pct) + ")"
+        }
         val age = DateUtils.getRelativeTimeSpanString(
             repo.cachedAt(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS,
         )
         val stale = if (repo.lastError != null) " · офлайн" else ""
-        return "1 ${Converter.symbol(a)} = ${Converter.formatShort(v)} ${Converter.symbol(b)} · $age$stale"
+        val noFix = if (repo.rateMode == "fix") " · фикс для ${repo.from}/${repo.to} не задан" else ""
+        return "$base · $age$stale$noFix"
     }
 
     private fun next(cur: String, skip: String): String {
@@ -76,8 +88,7 @@ object Widgets {
                 repo.amount = Converter.applyKey(repo.amount, action.removePrefix(ACTION_KEY))
             action == ACTION_SWAP -> {
                 // Like Wise/Revolut: the result becomes the new amount, so 1,250 ฿ → 33.13 € flips to 33.13 € → 1,250 ฿
-                val rates = repo.cachedRates()
-                val out = rates?.let { Converter.convert(repo.amount.toDoubleOrNull() ?: 0.0, repo.from, repo.to, it) }
+                val out = repo.convert(repo.amount.toDoubleOrNull() ?: 0.0)
                 if (out != null && out > 0) repo.amount = Converter.plain(out)
                 val f = repo.from; repo.from = repo.to; repo.to = f
                 updateAll(ctx, swapped = true)
@@ -86,6 +97,7 @@ object Widgets {
             action == ACTION_FROM -> repo.from = next(repo.from, skip = repo.to)
             action == ACTION_TO -> repo.to = next(repo.to, skip = repo.from)
             action == ACTION_REFRESH -> refresh(ctx, pending)
+            action == ACTION_MODE -> repo.rateMode = if (repo.rateMode == "fix") "bank" else "fix"
             else -> return false
         }
         updateAll(ctx)

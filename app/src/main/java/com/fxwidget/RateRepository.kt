@@ -64,6 +64,47 @@ class RateRepository(context: Context) {
         get() = prefs.getString("amount", "100") ?: "100"
         set(v) = prefs.edit().putString("amount", v).apply()
 
+    // ---- bank vs fixed (exchange office) rate --------------------------------------
+
+    /** "bank" = live rate, "fix" = the user's exchange-office rate where one is set. */
+    var rateMode: String
+        get() = prefs.getString("rate_mode", "bank") ?: "bank"
+        set(v) = prefs.edit().putString("rate_mode", v).apply()
+
+    var fixedRates: Map<String, Double>
+        get() = prefs.getString("fixed_rates", null)?.let { json ->
+            try {
+                val o = JSONObject(json)
+                o.keys().asSequence().associateWith { o.getDouble(it) }
+            } catch (e: Exception) { emptyMap() }
+        } ?: emptyMap()
+        set(v) = prefs.edit().putString("fixed_rates", JSONObject(v).toString()).apply()
+
+    fun setFixed(from: String, to: String, perFrom: Double) {
+        fixedRates = Converter.withFixed(fixedRates, from, to, perFrom)
+    }
+
+    fun clearFixed(a: String, b: String) {
+        fixedRates = fixedRates - Converter.pairKey(a, b)
+    }
+
+    fun bankRate(from: String = this.from, to: String = this.to): Double? =
+        cachedRates()?.let { Converter.convert(1.0, from, to, it) }
+
+    fun fixedRate(from: String = this.from, to: String = this.to): Double? =
+        Converter.fixedRate(from, to, fixedRates)
+
+    /** True when the fixed rate is actually being used for this pair. */
+    fun usingFixed(from: String = this.from, to: String = this.to): Boolean =
+        rateMode == "fix" && fixedRate(from, to) != null
+
+    /** Effective rate (units of [to] per 1 [from]) honouring the bank/fixed mode. */
+    fun rate(from: String = this.from, to: String = this.to): Double? =
+        if (usingFixed(from, to)) fixedRate(from, to) else bankRate(from, to)
+
+    fun convert(amount: Double, from: String = this.from, to: String = this.to): Double? =
+        rate(from, to)?.let { amount * it }
+
     /** Selected widget theme id (see Themes). */
     var themeId: String
         get() = prefs.getString("theme", "base") ?: "base"
