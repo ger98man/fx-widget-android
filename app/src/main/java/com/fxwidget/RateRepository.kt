@@ -64,6 +64,11 @@ class RateRepository(context: Context) {
         get() = prefs.getString("amount", "100") ?: "100"
         set(v) = prefs.edit().putString("amount", v).apply()
 
+    /** Selected widget theme id (see Themes). */
+    var themeId: String
+        get() = prefs.getString("theme", "base") ?: "base"
+        set(v) = prefs.edit().putString("theme", v).apply()
+
     /** Currencies offered in the picker; set in the app's settings. Default: all. */
     var enabledCurrencies: Set<String>
         get() = prefs.getStringSet("enabled_currencies", null)?.toSet() ?: Converter.CURRENCIES.toSet()

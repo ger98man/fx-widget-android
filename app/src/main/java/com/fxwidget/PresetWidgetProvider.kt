@@ -49,6 +49,18 @@ class PresetWidgetProvider : AppWidgetProvider() {
             v.setOnClickPendingIntent(R.id.refresh_btn, Widgets.broadcast(context, cls, Widgets.ACTION_REFRESH))
             v.setOnClickPendingIntent(R.id.presets, Widgets.openApp(context))
             v.setOnClickPendingIntent(R.id.status, Widgets.openApp(context))
+            val t = Themes.byId(repo.themeId)
+            v.setInt(android.R.id.background, "setBackgroundResource", t.bg)
+            v.setImageViewResource(R.id.art, t.art)
+            listOf(R.id.from_btn, R.id.to_btn).forEach {
+                v.setInt(it, "setBackgroundResource", t.row); v.setTextColor(it, t.text)
+            }
+            v.setInt(R.id.swap_btn, "setBackgroundResource", t.pill)
+            v.setInt(R.id.swap_btn, "setColorFilter", t.swapIcon)
+            v.setInt(R.id.refresh_btn, "setColorFilter", t.secondary)
+            v.setTextColor(R.id.status, t.secondary)
+            listOf(R.id.c0, R.id.c1, R.id.c2, R.id.c3, R.id.c4).forEach { v.setInt(it, "setBackgroundResource", t.key) }
+            CELLS.forEach { (inId, outId) -> v.setTextColor(inId, t.secondary); v.setTextColor(outId, t.result) }
             manager.updateAppWidget(ids, v)
         }
     }

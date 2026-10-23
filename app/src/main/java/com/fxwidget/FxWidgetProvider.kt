@@ -27,6 +27,32 @@ class FxWidgetProvider : AppWidgetProvider() {
         )
         private val QUICK = listOf(R.id.q0, R.id.q1, R.id.q2, R.id.q3, R.id.q4, R.id.q5)
 
+        private val DIGITS = listOf(R.id.k0, R.id.k1, R.id.k2, R.id.k3, R.id.k4, R.id.k5, R.id.k6, R.id.k7, R.id.k8, R.id.k9)
+
+        /** Colours/backgrounds only — never touches the swap flipper's child, so no stray animation. */
+        private fun applyTheme(v: RemoteViews, t: WidgetTheme) {
+            v.setInt(android.R.id.background, "setBackgroundResource", t.bg)
+            v.setImageViewResource(R.id.art, t.art)
+            v.setInt(R.id.from_row, "setBackgroundResource", t.row)
+            v.setInt(R.id.swap_btn, "setBackgroundResource", t.pill)
+            v.setInt(R.id.swap_a, "setColorFilter", t.swapIcon)
+            v.setInt(R.id.swap_b, "setColorFilter", t.swapIcon)
+            v.setTextColor(R.id.amount, t.text)
+            v.setTextColor(R.id.result, t.result)
+            v.setTextColor(R.id.from_btn, t.code)
+            v.setTextColor(R.id.to_btn, t.code)
+            v.setTextColor(R.id.status, t.secondary)
+            v.setInt(R.id.refresh_btn, "setColorFilter", t.secondary)
+            (DIGITS + R.id.kdot).forEach { v.setInt(it, "setBackgroundResource", t.key) }
+            DIGITS.forEach { v.setTextColor(it, t.text) }
+            v.setTextColor(R.id.kdot, t.secondary)
+            v.setInt(R.id.kback, "setBackgroundResource", t.key)
+            v.setInt(R.id.kback, "setColorFilter", t.secondary)
+            (QUICK + R.id.kclr).forEach { v.setInt(it, "setBackgroundResource", t.chip) }
+            QUICK.forEach { v.setTextColor(it, t.text) }
+            v.setTextColor(R.id.kclr, t.accent)
+        }
+
         fun render(context: Context, manager: AppWidgetManager, ids: IntArray, swapped: Boolean = false) {
             val repo = RateRepository(context)
             val rates = repo.cachedRates()
@@ -61,6 +87,7 @@ class FxWidgetProvider : AppWidgetProvider() {
             v.setOnClickPendingIntent(R.id.to_row, Widgets.picker(context, CurrencyPickerActivity.SIDE_TO))
             v.setOnClickPendingIntent(R.id.refresh_btn, Widgets.broadcast(context, cls, Widgets.ACTION_REFRESH))
             v.setOnClickPendingIntent(R.id.status, Widgets.openApp(context))
+            applyTheme(v, Themes.byId(repo.themeId))
             manager.updateAppWidget(ids, v)
         }
     }

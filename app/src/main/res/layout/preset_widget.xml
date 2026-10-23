@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Root is @android:id/background so launchers clip it to rounded corners; art sits under the content -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg"
+    android:background="@drawable/theme_base_bg"
+    android:clipToOutline="true">
+
+    <ImageView
+        android:id="@+id/art"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:src="@drawable/theme_base_art" />
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="12dp">
 
@@ -14,7 +29,7 @@
         <TextView android:id="@+id/from_btn" style="@style/FxHeaderChip" />
         <ImageView android:id="@+id/swap_btn" android:layout_width="42dp" android:layout_height="42dp"
             android:layout_marginStart="4dp" android:layout_marginEnd="4dp"
-            android:background="@drawable/swap_circle" android:contentDescription="swap"
+            android:background="@drawable/theme_base_pill" android:contentDescription="swap"
             android:padding="12dp" android:rotation="90" android:scaleType="fitCenter" android:src="@drawable/ic_swap" />
         <TextView android:id="@+id/to_btn" style="@style/FxHeaderChip" />
         <ImageView android:id="@+id/refresh_btn" android:layout_width="32dp" android:layout_height="match_parent"
@@ -28,23 +43,23 @@
         android:layout_weight="1"
         android:layout_marginTop="6dp"
         android:orientation="horizontal">
-        <LinearLayout style="@style/FxCell">
+        <LinearLayout android:id="@+id/c0" style="@style/FxCell">
             <TextView android:id="@+id/p0_in" style="@style/FxCellIn" />
             <TextView android:id="@+id/p0_out" style="@style/FxCellOut" />
         </LinearLayout>
-        <LinearLayout style="@style/FxCell">
+        <LinearLayout android:id="@+id/c1" style="@style/FxCell">
             <TextView android:id="@+id/p1_in" style="@style/FxCellIn" />
             <TextView android:id="@+id/p1_out" style="@style/FxCellOut" />
         </LinearLayout>
-        <LinearLayout style="@style/FxCell">
+        <LinearLayout android:id="@+id/c2" style="@style/FxCell">
             <TextView android:id="@+id/p2_in" style="@style/FxCellIn" />
             <TextView android:id="@+id/p2_out" style="@style/FxCellOut" />
         </LinearLayout>
-        <LinearLayout style="@style/FxCell">
+        <LinearLayout android:id="@+id/c3" style="@style/FxCell">
             <TextView android:id="@+id/p3_in" style="@style/FxCellIn" />
             <TextView android:id="@+id/p3_out" style="@style/FxCellOut" />
         </LinearLayout>
-        <LinearLayout style="@style/FxCell">
+        <LinearLayout android:id="@+id/c4" style="@style/FxCell">
             <TextView android:id="@+id/p4_in" style="@style/FxCellIn" />
             <TextView android:id="@+id/p4_out" style="@style/FxCellOut" />
         </LinearLayout>
@@ -54,3 +69,4 @@
         android:layout_marginTop="4dp" android:paddingStart="4dp" android:singleLine="true" android:ellipsize="end"
         android:textColor="#8B93A7" android:textSize="11sp" />
 </LinearLayout>
+</FrameLayout>

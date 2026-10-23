@@ -22,6 +22,24 @@
 
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
         android:layout_marginTop="12dp" android:paddingStart="8dp"
+        android:text="Тема виджета" android:textColor="#FFFFFF" android:textSize="16sp" android:textStyle="bold" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="168dp"
+        android:layout_marginTop="8dp"
+        android:scrollbars="none">
+        <LinearLayout
+            android:id="@+id/theme_strip"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp" />
+    </HorizontalScrollView>
+
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" android:paddingStart="8dp"
         android:text="Валюты в списке выбора" android:textColor="#FFFFFF" android:textSize="16sp" android:textStyle="bold" />
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
         android:paddingStart="8dp" android:paddingTop="2dp"

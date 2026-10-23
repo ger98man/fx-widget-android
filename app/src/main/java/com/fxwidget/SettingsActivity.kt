@@ -1,15 +1,22 @@
 package com.fxwidget
 
 import android.app.Activity
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 
-/** App settings: which currencies the widget's currency picker offers. */
+/** App settings: widget theme and which currencies the currency picker offers. */
 class SettingsActivity : Activity() {
 
     private lateinit var repo: RateRepository
@@ -33,6 +40,8 @@ class SettingsActivity : Activity() {
             enabled = mutableSetOf(repo.from, repo.to); save()
         }
 
+        buildThemeStrip()
+
         adapter = Adapter()
         val list = findViewById<ListView>(R.id.settings_list)
         list.adapter = adapter
@@ -46,6 +55,62 @@ class SettingsActivity : Activity() {
             }
         }
         updateCounter()
+    }
+
+    private fun dp(v: Int) = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, v.toFloat(), resources.displayMetrics).toInt()
+
+    /** One preview card per theme: real background + art + sample numbers in the theme's colours. */
+    private fun buildThemeStrip() {
+        val strip = findViewById<LinearLayout>(R.id.theme_strip)
+        strip.removeAllViews()
+        val selected = repo.themeId
+        for (t in Themes.ALL) {
+            val card = FrameLayout(this).apply {
+                layoutParams = LinearLayout.LayoutParams(dp(128), LinearLayout.LayoutParams.MATCH_PARENT)
+                    .apply { marginStart = dp(4); marginEnd = dp(4) }
+                setBackgroundResource(t.bg)
+                clipToOutline = true
+                setOnClickListener {
+                    repo.themeId = t.id
+                    Widgets.updateAll(this@SettingsActivity)
+                    buildThemeStrip()
+                    Toast.makeText(this@SettingsActivity, "Тема «${t.name}» применена", Toast.LENGTH_SHORT).show()
+                }
+            }
+            card.addView(ImageView(this).apply {
+                setImageResource(t.art)
+                scaleType = ImageView.ScaleType.CENTER_CROP
+            }, FrameLayout.LayoutParams(-1, -1))
+            card.addView(LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding(dp(10), dp(10), dp(10), dp(10))
+                addView(TextView(context).apply {
+                    text = "1,250 ฿"; setTextColor(t.text); textSize = 18f; setTypeface(typeface, Typeface.BOLD)
+                    gravity = Gravity.END
+                }, LinearLayout.LayoutParams(-1, -2))
+                addView(TextView(context).apply {
+                    text = "33.13 €"; setTextColor(t.result); textSize = 18f; setTypeface(typeface, Typeface.BOLD)
+                    gravity = Gravity.END
+                }, LinearLayout.LayoutParams(-1, -2))
+                addView(View(context), LinearLayout.LayoutParams(1, 0, 1f))
+                addView(TextView(context).apply {
+                    text = (if (t.id == selected) "✓ " else "") + t.name
+                    setTextColor(t.text); textSize = 13f; setTypeface(typeface, Typeface.BOLD)
+                }, LinearLayout.LayoutParams(-1, -2))
+                addView(TextView(context).apply {
+                    text = t.subtitle; setTextColor(t.secondary); textSize = 10f; maxLines = 2
+                }, LinearLayout.LayoutParams(-1, -2))
+            }, FrameLayout.LayoutParams(-1, -1))
+            if (t.id == selected) {
+                card.addView(View(this).apply {
+                    background = GradientDrawable().apply {
+                        cornerRadius = dp(28).toFloat()
+                        setStroke(dp(3), t.accent)
+                    }
+                }, FrameLayout.LayoutParams(-1, -1))
+            }
+            strip.addView(card)
+        }
     }
 
     private fun save() {
